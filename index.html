@@ -2,9 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8"/>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Trang chủ quản lý nội bộ- Bộ môn Cơ khí</title>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -14,150 +12,93 @@
 
 <script>
   // ============================================================
-  // DANH SÁCH EMAIL ĐƯỢC PHÉP TRUY CẬP (Chỉnh sửa tại đây)
+  // DANH SÁCH EMAIL ĐƯỢC PHÉP VÀO TRANG (Chỉnh sửa tại đây)
   // ============================================================
   const ALLOWED_EMAILS = [
     "nghiacamduyen@gmail.com",
     "hosonguyencam@gmail.com"
-    "trituenhantaoai1918@gmail.com"
+    "trituenhantaoai1918m@gmail.com"
   ];
   // ============================================================
 
   tailwind.config = {
     darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          primary: "#0ea5e9",
-          "primary-hover": "#0284c7",
-          "background-light": "#f3f4f6",
-          "background-dark": "#111827",
-          "card-light": "#ffffff",
-          "card-dark": "#1f2937",
-          "text-light": "#1f2937",
-          "text-dark": "#f9fafb",
-        },
-        fontFamily: {
-          display: ["Roboto", "sans-serif"],
-          body: ["Roboto", "sans-serif"],
-        },
-      },
-    },
+    theme: { extend: { colors: { primary: "#0ea5e9", "background-light": "#f3f4f6", "background-dark": "#111827", "card-light": "#ffffff", "card-dark": "#1f2937", "text-light": "#1f2937", "text-dark": "#f9fafb" } } }
   };
 </script>
 
 <style>
-  body { font-family: 'Roboto', sans-serif; transition: background-color 0.3s, color 0.3s; }
-  /* Mặc định ẩn nội dung khi chưa xác thực */
-  #main-wrapper { display: none; }
+  body { font-family: 'Roboto', sans-serif; }
   .grid-item { transition: transform 0.2s, box-shadow 0.2s; height: 160px; }
-  .grid-item:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+  /* Ẩn nội dung khi chưa xác nhận xong */
+  #main-content { display: none; }
+  #loading-screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: white; z-index: 1000; }
 </style>
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
 
-<div id="auth-check-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900 z-[9999]">
-    <div class="text-center p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-sm w-full mx-4">
-        <div id="loader" class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <h2 id="auth-title" class="text-xl font-bold mb-2">Đang kiểm tra quyền...</h2>
-        <p id="auth-msg" class="text-gray-500 text-sm mb-6">Hệ thống đang tự động nhận diện Gmail trên thiết bị của bạn.</p>
-        
+<div id="loading-screen">
+    <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <p class="text-gray-600 font-bold">Đang kiểm tra quyền truy cập...</p>
         <div id="g_id_onload"
              data-client_id="86663553257-8o03fka7vbe35t59vsc876j1mtef814g.apps.googleusercontent.com"
              data-callback="handleCredentialResponse"
-             data-auto_select="true">
+             data-auto_select="true"
+             data-itp_support="true">
         </div>
-        
-        <div class="g_id_signin flex justify-center" data-type="standard"></div>
+        <div class="g_id_signin mt-4" data-type="standard"></div>
     </div>
 </div>
 
-<div id="main-wrapper">
+<div id="main-content">
     <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 py-4 border-b-4 border-blue-600">
       <div class="container mx-auto px-4 flex justify-between items-center">
         <div class="flex items-center space-x-3">
           <span class="material-icons text-blue-600 text-3xl">engineering</span>
           <h1 class="text-xl font-bold text-blue-700 dark:text-blue-400 uppercase tracking-tight">Bộ Môn Cơ Khí - Long An</h1>
         </div>
-         <div class="absolute bottom-2 right-4 text-xs opacity-60">Version 1.30</div>
-        <div class="flex items-center space-x-4">
-            <span id="user-email-display" class="hidden md:inline text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded"></span>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                <span class="material-icons text-gray-600 dark:text-gray-300">dark_mode</span>
-            </button>
-        </div>
+        <span id="user-display" class="text-xs font-bold text-green-600"></span>
       </div>
     </header>
 
     <main class="container mx-auto px-4 py-10 max-w-6xl">
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
-        <a class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20" href="#">
-            <span class="material-icons text-4xl text-blue-600 mb-3">inventory_2</span>
-            <h3 class="text-lg font-bold text-blue-700 text-center uppercase">Tài sản CCDC<br/>BMCK</h3>
+        <a class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20" href="LINK_CỦA_BẠN">
+          <span class="material-icons text-4xl text-blue-600 mb-3">inventory_2</span>
+          <h3 class="text-lg font-bold text-blue-700 text-center uppercase">Tài sản CCDC<br/>BMCK</h3>
         </a>
-
-        <a class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20" href="#">
-            <span class="material-icons text-4xl text-blue-600 mb-3">precision_manufacturing</span>
-            <h3 class="text-lg font-bold text-blue-700 text-center uppercase">Báo cáo<br/>Máy móc thiết bị</h3>
-        </a>
-
         </div>
     </main>
-
-    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-6">
-      <div class="container mx-auto px-4 text-center text-sm text-gray-500">
-        <p>Trường Cao Đẳng Long An - Cơ Sở Đức Hòa.<br>All rights reserved © 2024</p>
-      </div>
-    </footer>
 </div>
 
 <script>
-    // Logic Dark Mode gốc của bạn
-    const themeToggle = document.getElementById('theme-toggle');
-    const html = document.documentElement;
-    themeToggle.addEventListener('click', () => {
-        html.classList.toggle('dark');
-        const isDark = html.classList.contains('dark');
-        themeToggle.querySelector('.material-icons').textContent = isDark ? 'light_mode' : 'dark_mode';
-    });
+  function decodeJwtResponse(token) {
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(window.atob(base64));
+  }
 
-    // Giải mã Token Google
-    function decodeJwtResponse(token) {
-        let base64Url = token.split('.')[1];
-        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        return JSON.parse(window.atob(base64));
+  function handleCredentialResponse(response) {
+    const responsePayload = decodeJwtResponse(response.credential);
+    const email = responsePayload.email.toLowerCase();
+
+    // KIỂM TRA QUYỀN
+    if (ALLOWED_EMAILS.some(e => e.toLowerCase() === email)) {
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('user-display').innerText = "Chào: " + email;
+    } else {
+      alert("Tài khoản " + email + " không có quyền truy cập!");
+      window.location.reload(); // Load lại để chọn tài khoản khác
     }
+  }
 
-    // Xử lý khi nhận diện được Gmail
-    function handleCredentialResponse(response) {
-        const responsePayload = decodeJwtResponse(response.credential);
-        const email = responsePayload.email.toLowerCase();
-
-        if (ALLOWED_EMAILS.map(e => e.toLowerCase()).includes(email)) {
-            // Khớp Email -> Mở trang
-            document.getElementById('auth-check-screen').style.display = 'none';
-            document.getElementById('main-wrapper').style.display = 'block';
-            document.getElementById('user-email-display').innerText = email;
-            document.getElementById('user-email-display').classList.remove('hidden');
-        } else {
-            // Không khớp -> Báo lỗi
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('auth-title').innerText = "Từ chối truy cập";
-            document.getElementById('auth-title').classList.add('text-red-600');
-            document.getElementById('auth-msg').innerText = "Tài khoản " + email + " không có trong danh sách cấp quyền.";
-        }
-    }
-
-    // Kiểm tra nếu chạy trên file cục bộ (file://)
-    window.onload = function() {
-        if (window.location.protocol === 'file:') {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('auth-title').innerText = "Lỗi Môi Trường";
-            document.getElementById('auth-msg').innerHTML = "Google không cho phép đăng nhập từ file cục bộ.<br><br>Hãy đưa file này lên <b>GitHub Pages</b> hoặc <b>Hosting</b> để sử dụng.";
-        }
-    }
+  // Tự động hiện bảng chọn tài khoản ngay khi vào trang
+  window.onload = function () {
+    google.accounts.id.prompt(); 
+  };
 </script>
 
 </body>
