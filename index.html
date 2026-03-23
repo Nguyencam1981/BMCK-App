@@ -12,66 +12,64 @@
 
 <script>
   // ============================================================
-  // DANH SÁCH EMAIL ĐƯỢC PHÉP VÀO TRANG (Chỉnh sửa tại đây)
+  // DANH SÁCH EMAIL ĐƯỢC PHÉP VÀO TRANG
   // ============================================================
-  const ALLOWED_EMAILS = [
-    "nghiacamduyen@gmail.com",
-    "hosonguyencam@gmail.com"
-    "trituenhantaoai1918m@gmail.com"
-  ];
+  const ALLOWED_EMAILS = ["nghiacamduyen@gmail.com", "hosonguyencam@gmail.com"];
   // ============================================================
 
   tailwind.config = {
     darkMode: "class",
-    theme: { extend: { colors: { primary: "#0ea5e9", "background-light": "#f3f4f6", "background-dark": "#111827", "card-light": "#ffffff", "card-dark": "#1f2937", "text-light": "#1f2937", "text-dark": "#f9fafb" } } }
+    theme: {
+      extend: {
+        colors: {
+          primary: "#0ea5e9",
+          "background-light": "#f3f4f6",
+          "background-dark": "#111827",
+          "card-light": "#ffffff",
+          "card-dark": "#1f2937",
+          "text-light": "#1f2937",
+          "text-dark": "#f9fafb",
+        },
+      },
+    },
   };
 </script>
 
 <style>
-  body { font-family: 'Roboto', sans-serif; }
+  body { font-family: 'Roboto', sans-serif; transition: opacity 0.5s; }
   .grid-item { transition: transform 0.2s, box-shadow 0.2s; height: 160px; }
-  /* Ẩn nội dung khi chưa xác nhận xong */
-  #main-content { display: none; }
-  #loading-screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: white; z-index: 1000; }
+  /* Mặc định ẩn nội dung để kiểm tra quyền */
+  .hidden-content { opacity: 0; pointer-events: none; }
 </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<body class="hidden-content bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
 
-<div id="loading-screen">
-    <div class="text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-        <p class="text-gray-600 font-bold">Đang kiểm tra quyền truy cập...</p>
-        <div id="g_id_onload"
-             data-client_id="86663553257-8o03fka7vbe35t59vsc876j1mtef814g.apps.googleusercontent.com"
-             data-callback="handleCredentialResponse"
-             data-auto_select="true"
-             data-itp_support="true">
-        </div>
-        <div class="g_id_signin mt-4" data-type="standard"></div>
+<div id="g_id_onload"
+     data-client_id="86663553257-8o03fka7vbe35t59vsc876j1mtef814g.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-auto_select="true"
+     data-itp_support="true">
+</div>
+
+<header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 py-4 border-b-4 border-blue-600">
+  <div class="container mx-auto px-4 flex justify-between items-center">
+    <div class="flex items-center space-x-3">
+      <span class="material-icons text-blue-600 text-3xl">engineering</span>
+      <h1 class="text-xl font-bold text-blue-700 dark:text-blue-400 uppercase tracking-tight">Bộ Môn Cơ Khí - Long An</h1>
     </div>
-</div>
+    <div id="user-tag" class="text-xs font-bold text-green-600"></div>
+  </div>
+</header>
 
-<div id="main-content">
-    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 py-4 border-b-4 border-blue-600">
-      <div class="container mx-auto px-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-          <span class="material-icons text-blue-600 text-3xl">engineering</span>
-          <h1 class="text-xl font-bold text-blue-700 dark:text-blue-400 uppercase tracking-tight">Bộ Môn Cơ Khí - Long An</h1>
-        </div>
-        <span id="user-display" class="text-xs font-bold text-green-600"></span>
-      </div>
-    </header>
-
-    <main class="container mx-auto px-4 py-10 max-w-6xl">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <a class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20" href="LINK_CỦA_BẠN">
-          <span class="material-icons text-4xl text-blue-600 mb-3">inventory_2</span>
-          <h3 class="text-lg font-bold text-blue-700 text-center uppercase">Tài sản CCDC<br/>BMCK</h3>
-        </a>
-        </div>
-    </main>
-</div>
+<main class="container mx-auto px-4 py-10 max-w-6xl">
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <a class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20" href="LINK_1">
+      <span class="material-icons text-4xl text-blue-600 mb-3">inventory_2</span>
+      <h3 class="text-lg font-bold text-blue-700 text-center uppercase">Tài sản CCDC<br/>BMCK</h3>
+    </a>
+    </div>
+</main>
 
 <script>
   function decodeJwtResponse(token) {
@@ -84,21 +82,24 @@
     const responsePayload = decodeJwtResponse(response.credential);
     const email = responsePayload.email.toLowerCase();
 
-    // KIỂM TRA QUYỀN
-    if (ALLOWED_EMAILS.some(e => e.toLowerCase() === email)) {
-      document.getElementById('loading-screen').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      document.getElementById('user-display').innerText = "Chào: " + email;
+    if (ALLOWED_EMAILS.map(e => e.toLowerCase()).includes(email)) {
+      // NẾU TRÙNG GMAIL: Hiện trang web ngay lập tức
+      document.body.classList.remove('hidden-content');
+      document.getElementById('user-tag').innerText = "Đã xác thực: " + email;
     } else {
-      alert("Tài khoản " + email + " không có quyền truy cập!");
-      window.location.reload(); // Load lại để chọn tài khoản khác
+      // NẾU KHÔNG TRÙNG: Báo lỗi và không cho xem trang
+      alert("LỖI TRUY CẬP: Tài khoản " + email + " không có quyền vào hệ thống này.");
+      document.body.innerHTML = "<div style='text-align:center; margin-top:100px; color:red; font-family:sans-serif;'><h1>403 - TỪ CHỐI TRUY CẬP</h1><p>Vui lòng đăng nhập đúng Gmail được cấp quyền trên trình duyệt.</p></div>";
+      document.body.classList.remove('hidden-content');
     }
   }
 
-  // Tự động hiện bảng chọn tài khoản ngay khi vào trang
-  window.onload = function () {
-    google.accounts.id.prompt(); 
-  };
+  // Nếu sau 3 giây không nhận diện được tài khoản nào (do chưa đăng nhập trình duyệt)
+  setTimeout(() => {
+    if (document.body.classList.contains('hidden-content')) {
+        alert("Vui lòng đăng nhập Gmail trên trình duyệt PC/Điện thoại trước khi truy cập.");
+    }
+  }, 3500);
 </script>
 
 </body>
