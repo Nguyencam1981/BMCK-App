@@ -48,7 +48,60 @@
   }
 </style>
 </head>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
+<script>
+const CLIENT_ID = "DÁN_CLIENT_ID_CỦA_BẠN";
+const SHEET_ID = "1M_fUzInNEmej8EvJoMmNk9b3_VkUg1k5";
+
+// danh sách quyền
+const EDITORS = [
+  "abc@gmail.com",
+  "giaovien@longan.edu.vn"
+];
+
+const VIEWERS = [
+  "nghiacamduyen@gmail.com",
+  "hosonguyencam@gmail.com"
+];
+
+// xử lý khi login
+function handleCredentialResponse(response) {
+  const data = parseJwt(response.credential);
+  const email = data.email;
+
+  console.log("Email:", email);
+
+  if (EDITORS.includes(email)) {
+    window.open(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit?rm=minimal`, "_blank");
+  } 
+  else if (VIEWERS.includes(email)) {
+    window.open(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/view?rm=minimal`, "_blank");
+  } 
+  else {
+    alert("Bạn không có quyền truy cập!");
+  }
+}
+
+// decode token
+function parseJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = decodeURIComponent(atob(base64Url).split('').map(c =>
+    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  ).join(''));
+  return JSON.parse(base64);
+}
+
+// gọi đăng nhập
+function loginGoogle() {
+  google.accounts.id.initialize({
+    client_id: CLIENT_ID,
+    callback: handleCredentialResponse
+  });
+
+  google.accounts.id.prompt();
+}
+</script>
 <body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col text-text-light dark:text-text-dark">
 
 <header class="relative w-full bg-gradient-to-r from-blue-800 to-primary text-white shadow-lg overflow-hidden">
@@ -80,7 +133,7 @@
     <div class="w-24 h-1 bg-white mx-auto rounded-full"></div>
   </div>
 
-  <div class="absolute bottom-2 right-4 text-xs opacity-60">Version 1.28</div>
+  <div class="absolute bottom-2 right-4 text-xs opacity-60">Version 1.26</div>
 </header>
 
 <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
@@ -132,13 +185,14 @@
 </a>
 
 <!-- PHIẾU ĐIỂM – LIÊN KẾT GOOGLE -->
-<a
-  class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
-  href="https://docs.google.com/document/d/1M_fUzInNEmej8EvJoMmNk9b3_VkUg1k5/edit"
-  target="_blank"
-  rel="noopener noreferrer">
+<a 
+  onclick="loginGoogle()"
+  class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 cursor-pointer">
+
   <span class="material-icons text-4xl text-green-600 mb-3">score</span>
-  <h3 class="text-lg font-bold text-green-700 text-center uppercase">Phiếu điểm BMCK</h3>
+  <h3 class="text-lg font-bold text-green-700 text-center uppercase">
+    Phiếu điểm BMCK
+  </h3>
 </a>
 
 <a class="grid-item group flex flex-col items-center justify-center p-6 bg-card-light dark:bg-card-dark rounded-xl shadow-md border-l-4 border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20" href="#">
